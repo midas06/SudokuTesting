@@ -1,5 +1,6 @@
 package com.example.harri.sudokutesting;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
@@ -7,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.GridView;
+
+import java.util.List;
 
 
 public class CellAdapter extends BaseAdapter {
@@ -53,4 +56,23 @@ public class CellAdapter extends BaseAdapter {
         imageView.setImageResource(cellImgs[position]);
         return imageView;
     }
+
+    public void setAllCellData(List<Integer> newData) {
+
+    }
+
+    public void setCellData(int cellIndex, int cellValue) {
+        String imagePath = "cellimage_" + cellValue;
+        int newImage = mContext.getResources().getIdentifier(imagePath, "drawable", mContext.getPackageName());
+        this.cellImgs[cellIndex] = newImage;
+    }
+
+    public void setSelectedCell(int cellIndex, int cellValue) {
+        String imagePath = "cellimage_" + cellValue + "_selected";
+        int newImage = mContext.getResources().getIdentifier(imagePath, "drawable", mContext.getPackageName());
+        this.cellImgs[cellIndex] = newImage;
+    }
+
+
+
 }

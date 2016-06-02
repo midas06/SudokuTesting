@@ -18,6 +18,7 @@ public class GameActivity extends AppCompatActivity {
     @BindView(R.id.layout) RelativeLayout layout;
     public GridView gridView;
     protected List<Button> buttonList = new ArrayList<Button>();
+    protected GameController controller;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +40,10 @@ public class GameActivity extends AppCompatActivity {
         float startHeight = (float)(layout.getHeight() * .1);
         float startWidth = (float)(layout.getWidth() * .05);
 
-        CellButton b = new CellButton(this);
-        b.set(dimensions);
-        layout.addView(b);
+    }
 
+    public void setController(GameController newController) {
+        this.controller = newController;
     }
 
 
