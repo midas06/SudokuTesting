@@ -8,14 +8,13 @@ public class DigitImpl implements Digit {
 	protected List<Integer> allValues;
 	
 	public DigitImpl() {
-		this.allValues = new ArrayList<Integer>();
+		this.allValues = new ArrayList<>();
 	}
 		
 	public void addValues(int[] newValues) {
+		this.allValues.clear();
 		for (int i : newValues) {
-			if (!this.allValues.contains(i)) {
-				this.allValues.add(i);
-			}			
+			this.allValues.add(i);
 		}
 	}
 

@@ -197,17 +197,19 @@ public class GameImpl implements Game, Gets, Sets {
     	}    	
     }
     
-    public void undo() {    	
-    	List<Cell> pastMove = new ArrayList<Cell>();
-    	
-    	for (String s : this.moveHistory.get(this.moveHistory.size() - 2)) {
-    		Cell c = new Cell(this);
-    		c.deserialize(s);
-    		pastMove.add(c);
-    	}
-    	
-    	this.thePuzzle = pastMove;
-    	this.moveHistory.remove(this.moveHistory.size() - 1);
+    public void undo() {
+        if (this.moveHistory.size() > 1) {
+            List<Cell> pastMove = new ArrayList<Cell>();
+
+            for (String s : this.moveHistory.get(this.moveHistory.size() - 2)) {
+                Cell c = new Cell(this);
+                c.deserialize(s);
+                pastMove.add(c);
+            }
+
+            this.thePuzzle = pastMove;
+            this.moveHistory.remove(this.moveHistory.size() - 1);
+        }
     }    
     
     public String exportMap() {
@@ -218,11 +220,16 @@ public class GameImpl implements Game, Gets, Sets {
 		Integer[] cellValues = new Integer[this.thePuzzle.size()];
 		for (Cell c : this.thePuzzle) {
             Integer i;
-            try {
-                i = c.getDigit().getValues()[0];
-            } catch (IndexOutOfBoundsException e) {
-                i = 0;
+			if (c.getDigit().getValues().length <= 1) {
+                try {
+                    i = c.getDigit().getValues()[0];
+                } catch (IndexOutOfBoundsException e) {
+                    i = 0;
+                }
+            } else {
+                i = 99;
             }
+
             cellValues[c.cellIndex] = i;
 		}
 		return cellValues;
@@ -234,15 +241,20 @@ public class GameImpl implements Game, Gets, Sets {
 			Integer i;
 
 			if (!c.getIsFixed()) {
-				try {
-					i = c.getDigit().getValues()[0];
-				} catch (IndexOutOfBoundsException e) {
-					i = 0;
-				}
-				Point p = new Point();
-				p.set(c.getIndex(), i);
-				pointList.add(p);
-			}
+                if (c.getDigit().getValues().length <= 1) {
+                    try {
+                        i = c.getDigit().getValues()[0];
+                    } catch (IndexOutOfBoundsException e) {
+                        i = 0;
+                    }
+                } else {
+                    i = 99;
+
+                }
+                Point p = new Point();
+                p.set(c.getIndex(), i);
+                pointList.add(p);
+            }
 		}
 		return pointList;
 	}

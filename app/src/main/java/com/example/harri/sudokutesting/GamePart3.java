@@ -1,9 +1,9 @@
 package com.example.harri.sudokutesting;
 
-import android.app.AlertDialog;
-import android.content.*;
+import android.content.Context;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -25,6 +25,7 @@ public class GamePart3 extends AppCompatActivity {
     Button btnSetValue_1, btnSetValue_2, btnSetValue_3, btnSetValue_4;
     Button btnUndo, btnClearValue, btnNote, btnHint;
     String[] optionsArray = {"1", "2", "3", "4"};
+    boolean[] isSetArray = {false, true, false, false};
     Context mContext = this;
 
     public Integer[] cellValues;
@@ -72,7 +73,7 @@ public class GamePart3 extends AppCompatActivity {
         btnSetValue_1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValidValue(1)) {
+                if (isValidValue()) {
                     setCellValue(selectedCell, 1);
                     setSelectedCell(selectedCell);
                 }
@@ -81,7 +82,7 @@ public class GamePart3 extends AppCompatActivity {
         btnSetValue_2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValidValue(2)) {
+                if (isValidValue()) {
                     setCellValue(selectedCell, 2);
                     setSelectedCell(selectedCell);
                 }
@@ -90,7 +91,7 @@ public class GamePart3 extends AppCompatActivity {
         btnSetValue_3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValidValue(3)) {
+                if (isValidValue()) {
                     setCellValue(selectedCell, 3);
                     setSelectedCell(selectedCell);
                 }
@@ -99,7 +100,7 @@ public class GamePart3 extends AppCompatActivity {
         btnSetValue_4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValidValue(4)) {
+                if (isValidValue()) {
                     setCellValue(selectedCell, 4);
                     setSelectedCell(selectedCell);
                 }
@@ -108,7 +109,7 @@ public class GamePart3 extends AppCompatActivity {
         btnClearValue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isValidValue(0)) {
+                if (isValidValue()) {
                     setCellValue(selectedCell, 0);
                     setSelectedCell(selectedCell);
                 }
@@ -120,44 +121,51 @@ public class GamePart3 extends AppCompatActivity {
                 undo();
             }
         });
+
         btnNote.setOnClickListener(new View.OnClickListener() {
-
-
             @Override
             public void onClick(View v) {
-                final List<Integer> selectedItemsList = new ArrayList<Integer>();
-                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                builder.setTitle("Select possible values")
-                        .setMultiChoiceItems(optionsArray, null, new android.content.DialogInterface.OnMultiChoiceClickListener() {
-                            @Override
-                            public void onClick(android.content.DialogInterface dialog, int selectedOption, boolean isChecked) {
-                                if (isChecked) {
-                                    selectedItemsList.add(selectedOption);
+                if (isValidValue()) {
+                    getMultipleValues();
+                    final List<Integer> selectedItemsList = new ArrayList<Integer>();
 
-                                } else if (selectedItemsList.contains(selectedOption)) {
-                                    selectedItemsList.remove(selectedOption);
+                    for (int i = 0; i < isSetArray.length; i++) {
+                        if (isSetArray[i]) {
+                            selectedItemsList.add(i);
+                        }
+                    }
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Select possible values")
+                            .setMultiChoiceItems(optionsArray, isSetArray, new android.content.DialogInterface.OnMultiChoiceClickListener() {
+                                @Override
+                                public void onClick(android.content.DialogInterface dialog, int selectedOption, boolean isChecked) {
+                                    if (isChecked) {
+                                        selectedItemsList.add(selectedOption);
+
+                                    } else if (selectedItemsList.contains(selectedOption)) {
+                                        selectedItemsList.remove(selectedOption);
+                                    }
                                 }
-                            }
-                        })
-                        .setPositiveButton("Ok", new android.content.DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(android.content.DialogInterface d, int id) {
-                                setMultipleValues(selectedItemsList);
-                            }
-                        })
-                        .setNegativeButton("Cancel", new android.content.DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(android.content.DialogInterface d, int id) {
-                                //
-                            }
-                        });
+                            })
+                            .setPositiveButton("Ok", new android.content.DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(android.content.DialogInterface d, int id) {
+                                    setMultipleValues(selectedItemsList);
+                                }
+                            })
+                            .setNegativeButton("Cancel", new android.content.DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(android.content.DialogInterface d, int id) {
+                                    //
+                                }
+                            });
 
-                AlertDialog d = builder.create();
-                d.show();
+                    AlertDialog d = builder.create();
+                    d.show();
+                }
+
             }
-
-
-
         });
     }
 
@@ -172,12 +180,13 @@ public class GamePart3 extends AppCompatActivity {
         this.gridView.invalidateViews();
     }
 
-    protected boolean isValidValue(int newValue) {
+    protected boolean isValidValue() {
         boolean isValid = true;
         if (this.selectedCell == -1) {
             Toast.makeText(GamePart3.this, "No cell has been selected", Toast.LENGTH_SHORT).show();
             isValid = false;
         } else if (theGame.isCellFixed(theGame.getCellByIndex(selectedCell))){
+            Toast.makeText(GamePart3.this, "The cell is fixed", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
         return isValid;
@@ -231,13 +240,36 @@ public class GamePart3 extends AppCompatActivity {
         this.refreshUnfixedCells();
     }
 
-    protected void setMultipleValues(List<Integer> newValues) {
-        StringBuilder s = new StringBuilder();
-        for (Integer i : newValues) {
-            s.append(optionsArray[i] + "\n");
+    public void getMultipleValues() {
+        int[] cellValues = this.theGame.getCellByIndex(selectedCell).getDigit().getValues();
+        if (cellValues.length == 0) {
+            for (int i = 0; i < this.isSetArray.length; i++) {
+                this.isSetArray[i] = false;
+            }
+        } else {
+            for (int i : cellValues) {
+                this.isSetArray[i - 1] = true;
+            }
         }
-        Toast.makeText(this, s.toString(), Toast.LENGTH_SHORT).show();
+    }
 
+    protected void setMultipleValues(List<Integer> newValues) {
+
+        if (newValues.size() == 0) {
+            this.theGame.clearCell(theGame.getCellByIndex(selectedCell));
+        } else {
+            int[] a = new int[newValues.size()];
+            for (int i = 0; i < newValues.size(); i++) {
+                Integer j = newValues.get(i);
+                a[i] = Integer.valueOf(this.optionsArray[j]);
+
+            }
+            theGame.setMultipleValues(a, theGame.getCellByIndex(selectedCell));
+            this.cellValues[selectedCell] = 99;
+            this.cellAdapter.setCellData(selectedCell, 99);
+        }
+        this.setSelectedCell(selectedCell);
+        this.gridView.invalidateViews();
 
     }
 
