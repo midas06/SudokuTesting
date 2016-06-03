@@ -1,30 +1,26 @@
 package com.example.harri.sudokutesting;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.ButterKnife;
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class GameActivity extends AppCompatActivity {
 
     @BindView(R.id.layout) RelativeLayout layout;
     public GridView gridView;
     protected List<Button> buttonList = new ArrayList<Button>();
-    protected GameController controller;
     Context c = this;
     Button b;
     String[] optionsArray = {"option1", "option2", "option3"};
@@ -95,9 +91,6 @@ public class GameActivity extends AppCompatActivity {
 
     public void onCancel() {
         //
-    }
-    public void setController(GameController newController) {
-        this.controller = newController;
     }
 
 
