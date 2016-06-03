@@ -178,6 +178,9 @@ public class GamePart3 extends AppCompatActivity {
         this.cellValues = theGame.exportCellValues();
         cellAdapter.setCellData(cellIndex, cellValue);
         this.gridView.invalidateViews();
+        if (this.isFull()) {
+            this.isComplete();
+        }
     }
 
     protected boolean isValidValue() {
@@ -271,6 +274,24 @@ public class GamePart3 extends AppCompatActivity {
         this.setSelectedCell(selectedCell);
         this.gridView.invalidateViews();
 
+    }
+
+    protected boolean isFull() {
+        boolean output = true;
+        for (int i : this.cellValues) {
+            if (i == 0 || i == 99) {
+                output = false;
+            }
+        }
+        return output;
+    }
+
+    public void isComplete() {
+        if (this.theGame.isSolved()) {
+            Toast.makeText(this, "Congratulations, you solved the puzzle!", Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(this, "Sorry, the puzzle isn't solved.", Toast.LENGTH_LONG).show();
+        }
     }
 
 
