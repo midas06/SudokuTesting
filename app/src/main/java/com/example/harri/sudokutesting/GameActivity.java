@@ -1,11 +1,17 @@
 package com.example.harri.sudokutesting;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +25,9 @@ public class GameActivity extends AppCompatActivity {
     public GridView gridView;
     protected List<Button> buttonList = new ArrayList<Button>();
     protected GameController controller;
+    Context c = this;
+    Button b;
+    String[] optionsArray = {"option1", "option2", "option3"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,18 +42,64 @@ public class GameActivity extends AppCompatActivity {
 //        b.setText("a");
 //        layout.addView(b);
 
-        this.gridView = new GridView_4x4(this);
-        layout.addView(this.gridView);
+        b = (Button)findViewById(R.id.btnAlert);
 
-        int dimensions = (int)(layout.getWidth() * .9);
-        float startHeight = (float)(layout.getHeight() * .1);
-        float startWidth = (float)(layout.getWidth() * .05);
+        b.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final List<Integer> selectedItemsList = new ArrayList<Integer>();
+                AlertDialog.Builder builder = new AlertDialog.Builder(c);
+                builder.setTitle("Pick one")
+                        .setMultiChoiceItems(optionsArray, null, new DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int selectedOption, boolean isChecked) {
+                                if (isChecked) {
+                                    selectedItemsList.add(selectedOption);
+
+                                } else if (selectedItemsList.contains(selectedOption)) {
+                                    selectedItemsList.remove(selectedOption);
+                                }
+                            }
+                        })
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface d, int id) {
+                                onOkay(selectedItemsList);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface d, int id) {
+                                onCancel();
+                            }
+                        });
+
+                AlertDialog d = builder.create();
+                d.show();
+            }
+
+        });
+
 
     }
 
+    public void onOkay(List<Integer> selectedList) {
+        StringBuilder s = new StringBuilder();
+        for (Integer i : selectedList) {
+            s.append(optionsArray[i] + "\n");
+        }
+        Toast.makeText(this, s.toString(), Toast.LENGTH_SHORT).show();
+
+    }
+
+    public void onCancel() {
+        //
+    }
     public void setController(GameController newController) {
         this.controller = newController;
     }
+
 
 
 

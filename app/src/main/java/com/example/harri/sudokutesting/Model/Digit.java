@@ -3,7 +3,7 @@ package com.example.harri.sudokutesting.Model;
 public interface Digit {
 	public void addValues(int[] newValues);
 	public void addSingleValue(int newValue);
-	public int[] getValues();	
+	public int[] getValues();
 	@Override
 	public String toString();	
 	public void clear();	

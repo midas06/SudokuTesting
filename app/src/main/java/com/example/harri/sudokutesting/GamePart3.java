@@ -1,5 +1,8 @@
 package com.example.harri.sudokutesting;
 
+import android.app.AlertDialog;
+import android.content.*;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -11,16 +14,19 @@ import android.widget.Toast;
 
 import com.example.harri.sudokutesting.Model.GameImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.ButterKnife;
 
 public class GamePart3 extends AppCompatActivity {
     GridView gridView;
     CellAdapter cellAdapter;
-    Button btnSetValue_2;
-    Button btnSetValue_3;
-    Button btnSetValue_4;
-    Button btnSetValue_1;
-    Button btnClearValue;
+    Button btnSetValue_1, btnSetValue_2, btnSetValue_3, btnSetValue_4;
+    Button btnUndo, btnClearValue, btnNote, btnHint;
+    String[] optionsArray = {"1", "2", "3", "4"};
+    Context mContext = this;
+
     public Integer[] cellValues;
     GameImpl theGame;
 
@@ -37,6 +43,9 @@ public class GamePart3 extends AppCompatActivity {
         btnSetValue_3 = (Button)findViewById(R.id.btnSetValue_3);
         btnSetValue_4 = (Button)findViewById(R.id.btnSetValue_4);
         btnClearValue = (Button)findViewById(R.id.btnClearValue);
+        btnUndo = (Button)findViewById(R.id.btnUndo);
+        btnNote = (Button)findViewById(R.id.btnNote);
+        btnHint = (Button)findViewById(R.id.btnHint);
         gridView = (GridView)findViewById(R.id.cellGridview);
         theGame = new GameImpl();
         this.initMap();
@@ -105,10 +114,59 @@ public class GamePart3 extends AppCompatActivity {
                 }
             }
         });
+        btnUndo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                undo();
+            }
+        });
+        btnNote.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+                final List<Integer> selectedItemsList = new ArrayList<Integer>();
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Select possible values")
+                        .setMultiChoiceItems(optionsArray, null, new android.content.DialogInterface.OnMultiChoiceClickListener() {
+                            @Override
+                            public void onClick(android.content.DialogInterface dialog, int selectedOption, boolean isChecked) {
+                                if (isChecked) {
+                                    selectedItemsList.add(selectedOption);
+
+                                } else if (selectedItemsList.contains(selectedOption)) {
+                                    selectedItemsList.remove(selectedOption);
+                                }
+                            }
+                        })
+                        .setPositiveButton("Ok", new android.content.DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(android.content.DialogInterface d, int id) {
+                                setMultipleValues(selectedItemsList);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new android.content.DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(android.content.DialogInterface d, int id) {
+                                //
+                            }
+                        });
+
+                AlertDialog d = builder.create();
+                d.show();
+            }
+
+
+
+        });
     }
 
     protected void setCellValue(int cellIndex, int cellValue) {
-        this.theGame.setSingleValue(cellValue, theGame.getCellByIndex(cellIndex));
+        if (cellValue != 0) {
+            this.theGame.setSingleValue(cellValue, theGame.getCellByIndex(cellIndex));
+        } else {
+            this.theGame.clearCell(theGame.getCellByIndex(cellIndex));
+        }
         this.cellValues = theGame.exportCellValues();
         cellAdapter.setCellData(cellIndex, cellValue);
         this.gridView.invalidateViews();
@@ -156,6 +214,30 @@ public class GamePart3 extends AppCompatActivity {
         theGame.finaliseInitialPuzzle();
 
         this.cellValues = theGame.exportCellValues();
+
+    }
+
+    protected void refreshUnfixedCells() {
+        List<Point> pointList = theGame.exportUnfixedValues();
+        for(Point p : pointList) {
+            this.cellValues[p.x] = p.y;
+            this.cellAdapter.setCellData(p.x, p.y);
+        }
+        this.gridView.invalidateViews();
+    }
+
+    protected void undo() {
+        this.theGame.undo();
+        this.refreshUnfixedCells();
+    }
+
+    protected void setMultipleValues(List<Integer> newValues) {
+        StringBuilder s = new StringBuilder();
+        for (Integer i : newValues) {
+            s.append(optionsArray[i] + "\n");
+        }
+        Toast.makeText(this, s.toString(), Toast.LENGTH_SHORT).show();
+
 
     }
 

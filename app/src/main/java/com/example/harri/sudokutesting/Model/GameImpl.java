@@ -1,5 +1,7 @@
 package com.example.harri.sudokutesting.Model;
 
+import android.graphics.Point;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -224,6 +226,25 @@ public class GameImpl implements Game, Gets, Sets {
             cellValues[c.cellIndex] = i;
 		}
 		return cellValues;
+	}
+
+	public List<Point> exportUnfixedValues() {
+		List<Point> pointList = new ArrayList<Point>();
+		for (Cell c : this.thePuzzle) {
+			Integer i;
+
+			if (!c.getIsFixed()) {
+				try {
+					i = c.getDigit().getValues()[0];
+				} catch (IndexOutOfBoundsException e) {
+					i = 0;
+				}
+				Point p = new Point();
+				p.set(c.getIndex(), i);
+				pointList.add(p);
+			}
+		}
+		return pointList;
 	}
     
     protected List<String> serialize() {
