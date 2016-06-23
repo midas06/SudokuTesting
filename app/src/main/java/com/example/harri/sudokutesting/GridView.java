@@ -5,6 +5,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,8 @@ public abstract class GridView extends View {
     protected float endWidth;
     protected float endHeight;
 
+    private int width, height;
+
 
     public GridView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -30,6 +33,9 @@ public abstract class GridView extends View {
 
     public GridView(Context context) {
         super(context);
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        height = metrics.heightPixels;
+        width = metrics.widthPixels;
     }
 
 //    @Override
@@ -106,20 +112,5 @@ public abstract class GridView extends View {
         canvas.drawRect(0, 0, getWidth(), getWidth(), p);
 
     }
-
-    public float getStartX() {
-        return this.startWidth;
-    }
-
-
-    public float getStartY() {
-        return this.startHeight;
-    }
-
-
-    public int getCellDim() {
-        return (int)this.cellWidth;
-    }
-
 
 }

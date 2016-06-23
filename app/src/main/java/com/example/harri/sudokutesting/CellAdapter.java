@@ -55,9 +55,6 @@ public class CellAdapter extends BaseAdapter {
         return imageView;
     }
 
-    public void setAllCellData(List<Integer> newData) {
-
-    }
 
     public void setCellData(int cellIndex, int cellValue) {
         String imagePath = "cellimage_" + cellValue;

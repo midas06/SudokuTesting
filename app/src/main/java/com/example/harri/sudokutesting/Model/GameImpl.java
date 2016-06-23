@@ -15,14 +15,20 @@ public class GameImpl implements Game, Gets, Sets {
 	private List<List<String>> moveHistory;
 	private PuzzleStringBuilder psb;
 	private boolean mapIsSet;
+    private Filer filer;
 
 	public GameImpl() {
 		this.psb = new PuzzleStringBuilder(this);
 		this.checker = new Checker();
 		this.moveHistory = new ArrayList<List<String>>();
 		this.mapIsSet = false;
+        this.filer = new Filer(this);
 	}
-	
+
+    public boolean isMapSet() {
+        return this.mapIsSet;
+    }
+
 	protected void init() {
 		int count = 0;
 		
@@ -38,6 +44,10 @@ public class GameImpl implements Game, Gets, Sets {
 	public void setPuzzle(List<Cell> newPuzzle) {
 		this.thePuzzle = newPuzzle;
 	}
+
+    public void setThePuzzle(int thePuzzle) {
+        this.filer.setMap(thePuzzle);
+    }
 	
 	public void setMaxValue(int maximum) {				
 		this.maximum = maximum;
@@ -80,6 +90,7 @@ public class GameImpl implements Game, Gets, Sets {
     public int getMaxValue() {
     	return this.maximum;
     }
+
     
     public int getMaxDimension() {
     	double d = Math.sqrt((double)this.maximum);
@@ -304,6 +315,24 @@ public class GameImpl implements Game, Gets, Sets {
     
     public Checker getChecker() {
     	return this.checker;
+    }
+
+	public List<Integer> getAllPossibleRowValues(Cell theCell) {
+		this.checker.set(PuzzleHelper.getCellListByRow(this.getPuzzle(), theCell.getRowIndex()));
+		Set<Integer> rowPossible = new HashSet<Integer> (this.checker.getUnusedValues());
+		return new ArrayList<>(rowPossible);
+	}
+
+    public List<Integer> getAllPossibleColumnValues(Cell theCell) {
+        this.checker.set(PuzzleHelper.getCellListByColumn(this.getPuzzle(), theCell.getColumnIndex()));
+        Set<Integer> colPossible = new HashSet<Integer> (this.checker.getUnusedValues());
+        return new ArrayList<>(colPossible);
+    }
+
+    public List<Integer> getAllPossibleSquareValues(Cell theCell) {
+        this.checker.set(PuzzleHelper.getCellListBySquare(this.getPuzzle(), theCell.getSquareIndex()));
+        Set<Integer> sqPossible = new HashSet<Integer> (this.checker.getUnusedValues());
+        return new ArrayList<>(sqPossible);
     }
     
     public List<Integer> getAllPossibleValues(Cell theCell) {
