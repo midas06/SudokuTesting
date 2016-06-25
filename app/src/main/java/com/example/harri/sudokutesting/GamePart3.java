@@ -12,9 +12,12 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.GridView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.harri.sudokutesting.Model.GameImpl;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,6 +34,7 @@ public class GamePart3 extends AppCompatActivity {
     boolean[] isSetArray = {false, true, false, false};
     Context mContext = this;
     SudokuController controller = SudokuController.getInstance();
+    TextView tviewMoveCount;
 
     public Integer[] cellValues;
     GameImpl theGame;
@@ -55,6 +59,7 @@ public class GamePart3 extends AppCompatActivity {
         btnRestart = (Button)findViewById(R.id.btnRestart);
         gridView = (GridView)findViewById(R.id.cellGridview);
         theGame = controller.getModel();
+        tviewMoveCount = (TextView) findViewById(R.id.tview_moveCount);
         this.initMap();
 
         this.cellAdapter = new CellAdapter(this);
@@ -84,6 +89,7 @@ public class GamePart3 extends AppCompatActivity {
                 if (isValidValue()) {
                     setCellValue(selectedCell, 1);
                     setSelectedCell(selectedCell);
+                    updateMoveCount();
                 }
             }
         });
@@ -93,6 +99,7 @@ public class GamePart3 extends AppCompatActivity {
                 if (isValidValue()) {
                     setCellValue(selectedCell, 2);
                     setSelectedCell(selectedCell);
+                    updateMoveCount();
                 }
             }
         });
@@ -102,6 +109,7 @@ public class GamePart3 extends AppCompatActivity {
                 if (isValidValue()) {
                     setCellValue(selectedCell, 3);
                     setSelectedCell(selectedCell);
+                    updateMoveCount();
                 }
             }
         });
@@ -111,6 +119,7 @@ public class GamePart3 extends AppCompatActivity {
                 if (isValidValue()) {
                     setCellValue(selectedCell, 4);
                     setSelectedCell(selectedCell);
+                    updateMoveCount();
                 }
             }
         });
@@ -118,8 +127,12 @@ public class GamePart3 extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (isValidValue()) {
-                    setCellValue(selectedCell, 0);
                     setSelectedCell(selectedCell);
+                    if (cellValues[selectedCell] != 0) {
+                        setCellValue(selectedCell, 0);
+                        updateMoveCount();
+                    }
+
                 }
             }
         });
@@ -177,6 +190,7 @@ public class GamePart3 extends AppCompatActivity {
 
                     AlertDialog d = builder.create();
                     d.show();
+                    updateMoveCount();
                 }
 
             }
@@ -261,6 +275,7 @@ public class GamePart3 extends AppCompatActivity {
         }
 
         this.cellValues = theGame.exportCellValues();
+        this.controller.startTimer();
 
     }
 
@@ -276,6 +291,7 @@ public class GamePart3 extends AppCompatActivity {
     protected void undo() {
         this.controller.undo();
         this.refreshUnfixedCells();
+        updateMoveCount();
     }
 
     public void getMultipleValues() {
@@ -326,7 +342,12 @@ public class GamePart3 extends AppCompatActivity {
 
     public void isComplete() {
         if (this.theGame.isSolved()) {
-            Toast.makeText(this, "Congratulations, you solved the puzzle!", Toast.LENGTH_LONG).show();
+
+
+            String timeTaken = this.getTime(this.controller.getTime());
+
+            Toast.makeText(this, "Congratulations, you solved the puzzle in " + timeTaken + "!", Toast.LENGTH_LONG).show();
+
         } else {
             Toast.makeText(this, "Sorry, the puzzle isn't solved.", Toast.LENGTH_LONG).show();
         }
@@ -336,6 +357,7 @@ public class GamePart3 extends AppCompatActivity {
         this.controller.restart();
         this.refreshUnfixedCells();
         this.gridView.invalidateViews();
+        updateMoveCount();
     }
 
     public void getHint(int theHint) {
@@ -376,6 +398,36 @@ public class GamePart3 extends AppCompatActivity {
 
 
         Toast.makeText(this, s.toString(), Toast.LENGTH_LONG).show();
+    }
+
+    public void updateMoveCount() {
+        this.tviewMoveCount.setText(Integer.toString(this.controller.getMoveCount()));
+    }
+
+    public String getTime(long timeTaken) {
+
+        long diffSeconds = timeTaken / 1000 % 60;
+        long diffMinutes = timeTaken / (60 * 1000) % 60;
+
+        String diffMin, diffSec;
+
+        if (diffMinutes < 10) {
+            diffMin = "0" + diffMinutes;
+        } else if (diffMinutes == 0) {
+            diffMin = "00";
+        } else {
+            diffMin = Long.toString(diffMinutes);
+        }
+
+        if (diffSeconds < 10) {
+            diffSec = "0" + diffSeconds;
+        } else if (diffSeconds == 0) {
+            diffSec = "00";
+        } else {
+            diffSec = Long.toString(diffSeconds);
+        }
+
+        return diffMin + ":" + diffSec;
     }
 
 

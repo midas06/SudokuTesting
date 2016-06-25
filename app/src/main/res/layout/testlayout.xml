@@ -25,6 +25,18 @@
             android:id="@+id/btnRestart"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="0"
+            android:id="@+id/tview_moveCount"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:textIsSelectable="false"
+            android:textSize="25dp"
+            android:layout_marginRight="10dp" />
     </RelativeLayout>
     <RelativeLayout
         android:layout_width="match_parent"
@@ -59,6 +71,16 @@
                     android:layout_height="wrap_content"
                     android:text="Note"
                     android:id="@+id/btnNote" />
+            </TableRow>
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Space
+                    android:layout_width="20px"
+                    android:layout_height="20dp"
+                    android:layout_column="0" />
             </TableRow>
 
             <TableRow

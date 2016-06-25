@@ -97,8 +97,8 @@ public class SudokuController extends AbstractController {
         model.restart();
     }
     public long getTime() {
-        //
-        return 0;
+        this.model.endTimer();
+        return this.model.getTimeTaken();
     }
 
     public int[] loadFile() {
@@ -111,6 +111,24 @@ public class SudokuController extends AbstractController {
 
     public void clearCell(int where) {
         this.model.clearCell(model.getCellByIndex(where));
+    }
+
+    public int getMoveCount() {
+        return this.model.getMoveCount();
+    }
+
+
+
+    public void startTimer() {
+        this.model.startTimer();
+    }
+
+    public int[] getAvailableLevels() {
+        return this.model.getAvailableLevels();
+    }
+
+    public void changeLevel(int level) {
+        this.model.setThePuzzle(level);
     }
 
 

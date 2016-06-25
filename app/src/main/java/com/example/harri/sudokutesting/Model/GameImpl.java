@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.Date;
+
 
 public class GameImpl implements Game, Gets, Sets {
 	
@@ -16,6 +18,7 @@ public class GameImpl implements Game, Gets, Sets {
 	private PuzzleStringBuilder psb;
 	private boolean mapIsSet;
     private Filer filer;
+	private Date startTime, endTime;
 
 	public GameImpl() {
 		this.psb = new PuzzleStringBuilder(this);
@@ -47,6 +50,10 @@ public class GameImpl implements Game, Gets, Sets {
 
     public void setThePuzzle(int thePuzzle) {
         this.filer.setMap(thePuzzle);
+    }
+
+    public int[] getAvailableLevels() {
+        return this.filer.getAvailableLevels();
     }
 	
 	public void setMaxValue(int maximum) {				
@@ -372,6 +379,20 @@ public class GameImpl implements Game, Gets, Sets {
 
     public boolean isCellFixed(Cell theCell) {
         return theCell.isFixed;
+    }
+
+    public void startTimer() {
+        this.startTime = new Date();
+    }
+
+    public void endTimer() {
+        this.endTime = new Date();
+    }
+
+    public long getTimeTaken() {
+        long difference = this.endTime.getTime() - this.startTime.getTime();
+
+        return difference;
     }
     
 

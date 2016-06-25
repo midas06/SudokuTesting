@@ -1,11 +1,10 @@
 package com.example.harri.sudokutesting.Model;
 
-/**
- * Created by harri on 23/06/2016.
- */
+
 public class Filer {
 
     GameImpl theGame;
+    int[] availableLevels = {1, 2, 3};
 
     public Filer(GameImpl model) {
         this.theGame = model;
@@ -60,6 +59,10 @@ public class Filer {
             default:
                 break;
         }
+    }
+
+    public int[] getAvailableLevels () {
+        return this.availableLevels;
     }
 
 
