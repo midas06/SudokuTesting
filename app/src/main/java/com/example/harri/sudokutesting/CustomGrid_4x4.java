@@ -4,16 +4,16 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
 
-public class GridView_4x4 extends GridView{
+public class CustomGrid_4x4 extends CustomGrid {
 
     Context context;
     int[] cellInfo;
 
-    public GridView_4x4(Context context, AttributeSet attrs) {
+    public CustomGrid_4x4(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public GridView_4x4(Context context) {
+    public CustomGrid_4x4(Context context) {
         super(context);
     }
 
@@ -22,7 +22,6 @@ public class GridView_4x4 extends GridView{
         super.onDraw(canvas);
 
         // draw square lines
-
         this.p.setStrokeWidth(8);
         double boxWidth = getWidth() / 2;
         for (int i = 0; i < 2; i++) {
@@ -34,7 +33,6 @@ public class GridView_4x4 extends GridView{
 
 
         // draw individual cell lines
-
         this.p.setStrokeWidth(3);
         this.cellWidth = getWidth() / 4;
 

@@ -1,6 +1,5 @@
 package com.example.harri.sudokutesting;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
@@ -17,15 +16,13 @@ import android.widget.Toast;
 
 import com.example.harri.sudokutesting.Model.GameImpl;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import butterknife.ButterKnife;
 
-public class GamePart3 extends AppCompatActivity {
+public class SudokuGame extends AppCompatActivity {
     GridView gridView;
     CellAdapter cellAdapter;
     Button btnSetValue_1, btnSetValue_2, btnSetValue_3, btnSetValue_4;
@@ -45,7 +42,7 @@ public class GamePart3 extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_game_part3);
-        setContentView(R.layout.testlayout);
+        setContentView(R.layout.gamelayout);
 
         ButterKnife.bind(this);
         btnSetValue_1 = (Button)findViewById(R.id.btnSetValue_1);
@@ -179,6 +176,7 @@ public class GamePart3 extends AppCompatActivity {
                                 @Override
                                 public void onClick(android.content.DialogInterface d, int id) {
                                     setMultipleValues(selectedItemsList);
+                                    updateMoveCount();
                                 }
                             })
                             .setNegativeButton("Cancel", new android.content.DialogInterface.OnClickListener() {
@@ -187,10 +185,8 @@ public class GamePart3 extends AppCompatActivity {
                                     //
                                 }
                             });
-
                     AlertDialog d = builder.create();
                     d.show();
-                    updateMoveCount();
                 }
 
             }
@@ -215,7 +211,6 @@ public class GamePart3 extends AppCompatActivity {
 
     protected void setCellValue(int cellIndex, int cellValue) {
         if (cellValue != 0) {
-            //this.theGame.setSingleValue(cellValue, theGame.getCellByIndex(cellIndex));
             this.controller.setSingle(cellIndex, cellValue);
         } else {
             this.theGame.clearCell(theGame.getCellByIndex(cellIndex));
@@ -231,10 +226,10 @@ public class GamePart3 extends AppCompatActivity {
     protected boolean isValidValue() {
         boolean isValid = true;
         if (this.selectedCell == -1) {
-            Toast.makeText(GamePart3.this, "No cell has been selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SudokuGame.this, "No cell has been selected", Toast.LENGTH_SHORT).show();
             isValid = false;
         } else if (this.controller.fixed(this.selectedCell)){
-            Toast.makeText(GamePart3.this, "The cell is fixed", Toast.LENGTH_SHORT).show();
+            Toast.makeText(SudokuGame.this, "The cell is fixed", Toast.LENGTH_SHORT).show();
             isValid = false;
         }
         return isValid;
@@ -261,21 +256,14 @@ public class GamePart3 extends AppCompatActivity {
     }
 
     protected void initMap() {
-//        theGame.setMaxValue(16);
-//        theGame.setSingleValue(2, theGame.getCellByCoord(2, 0));
-//        theGame.setSingleValue(3, theGame.getCellByCoord(1, 1));
-//        theGame.setSingleValue(4, theGame.getCellByCoord(3, 1));
-//        theGame.setSingleValue(3, theGame.getCellByCoord(0, 2));
-//        theGame.setSingleValue(4, theGame.getCellByCoord(2, 2));
-//        theGame.setSingleValue(1, theGame.getCellByCoord(1, 3));
-//        theGame.finaliseInitialPuzzle();
-
         if (!this.controller.getModel().isMapSet()) {
             this.controller.setMap(1);
+            this.controller.startTimer();
         }
 
         this.cellValues = theGame.exportCellValues();
-        this.controller.startTimer();
+        this.updateMoveCount();
+
 
     }
 
@@ -295,7 +283,6 @@ public class GamePart3 extends AppCompatActivity {
     }
 
     public void getMultipleValues() {
-        //int[] cellValues = this.theGame.getCellByIndex(selectedCell).getDigit().getValues();
         int[] cellValues = this.controller.getMultiple(selectedCell);
         if (cellValues.length == 0) {
             for (int i = 0; i < this.isSetArray.length; i++) {
@@ -309,9 +296,7 @@ public class GamePart3 extends AppCompatActivity {
     }
 
     protected void setMultipleValues(List<Integer> newValues) {
-
         if (newValues.size() == 0) {
-            //this.theGame.clearCell(theGame.getCellByIndex(selectedCell));
             this.controller.clearCell(selectedCell);
         } else {
             int[] a = new int[newValues.size()];
@@ -320,7 +305,6 @@ public class GamePart3 extends AppCompatActivity {
                 a[i] = Integer.valueOf(this.optionsArray[j]);
 
             }
-            //theGame.setMultipleValues(a, theGame.getCellByIndex(selectedCell));
             this.controller.setMultiple(selectedCell, a);
             this.cellValues[selectedCell] = 99;
             this.cellAdapter.setCellData(selectedCell, 99);
@@ -341,9 +325,7 @@ public class GamePart3 extends AppCompatActivity {
     }
 
     public void isComplete() {
-        if (this.theGame.isSolved()) {
-
-
+        if (this.controller.isFinished()) {
             String timeTaken = this.getTime(this.controller.getTime());
 
             Toast.makeText(this, "Congratulations, you solved the puzzle in " + timeTaken + "!", Toast.LENGTH_LONG).show();
@@ -368,19 +350,20 @@ public class GamePart3 extends AppCompatActivity {
         switch(theHint) {
             case 0:
                 theType = "row";
-                possibleList = theGame.getAllPossibleRowValues(theGame.getCellByIndex(selectedCell));
+                possibleList = this.controller.getRowHint(selectedCell);
                 break;
             case 1:
                 theType = "column";
-                possibleList = theGame.getAllPossibleColumnValues(theGame.getCellByIndex(selectedCell));
+                possibleList = this.controller.getColumnHint(selectedCell);
                 break;
+
             case 2:
                 theType = "square";
-                possibleList = theGame.getAllPossibleSquareValues(theGame.getCellByIndex(selectedCell));
+                possibleList = this.controller.getSquareHint(selectedCell);
                 break;
             case 3:
                 theType = "cell";
-                possibleList = theGame.getAllPossibleValues(theGame.getCellByIndex(selectedCell));
+                possibleList = this.controller.getCellHint(selectedCell);
                 break;
             default:
                 break;
@@ -392,10 +375,7 @@ public class GamePart3 extends AppCompatActivity {
         for (Integer i : possibleList) {
             s.append(i + ", ");
         }
-
         s.delete(s.length() - 2, s.length());
-
-
 
         Toast.makeText(this, s.toString(), Toast.LENGTH_LONG).show();
     }

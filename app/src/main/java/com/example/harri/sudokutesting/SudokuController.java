@@ -95,7 +95,9 @@ public class SudokuController extends AbstractController {
 
     public void restart() {
         model.restart();
+        model.startTimer();
     }
+
     public long getTime() {
         this.model.endTimer();
         return this.model.getTimeTaken();
@@ -116,8 +118,6 @@ public class SudokuController extends AbstractController {
     public int getMoveCount() {
         return this.model.getMoveCount();
     }
-
-
 
     public void startTimer() {
         this.model.startTimer();

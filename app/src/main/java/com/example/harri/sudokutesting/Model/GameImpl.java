@@ -393,6 +393,7 @@ public class GameImpl implements Game, Gets, Sets {
         long difference = this.endTime.getTime() - this.startTime.getTime();
 
         return difference;
+
     }
     
 

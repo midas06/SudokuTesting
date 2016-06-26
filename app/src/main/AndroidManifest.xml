@@ -10,7 +10,7 @@
 
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
 
-        <activity android:name=".GamePart3">
+        <activity android:name=".SudokuGame">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

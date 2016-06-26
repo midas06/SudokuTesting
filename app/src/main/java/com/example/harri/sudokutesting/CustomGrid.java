@@ -14,7 +14,7 @@ import android.widget.LinearLayout;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class GridView extends View {
+public abstract class CustomGrid extends View {
     protected double cellWidth;
     protected Paint p;
     protected float dimensions;
@@ -24,30 +24,13 @@ public abstract class GridView extends View {
     protected float endWidth;
     protected float endHeight;
 
-    private int width, height;
-
-
-    public GridView(Context context, AttributeSet attrs) {
+    public CustomGrid(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public GridView(Context context) {
+    public CustomGrid(Context context) {
         super(context);
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        height = metrics.heightPixels;
-        width = metrics.widthPixels;
     }
-
-//    @Override
-//    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//        setMeasuredDimension(measureWidth(widthMeasureSpec),
-//                70                 measureHeight(heightMeasureSpec));
-//    }
-//
-//    private int measureWidth(int measureSpec) {
-//        int preferred = image.getWidth() * 2;
-//        return getMeasurement(measureSpec, preferred);
-//    }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -65,29 +48,20 @@ public abstract class GridView extends View {
 
         //Measure Width
         if (widthMode == MeasureSpec.EXACTLY) {
-            //Must be this size
             width = widthSize;
         } else if (widthMode == MeasureSpec.AT_MOST) {
-            //Can't be bigger than...
             width = Math.min(desiredWidth, widthSize);
         } else {
-            //Be whatever you want
             width = desiredWidth;
         }
-
-        //Measure Height
         if (heightMode == MeasureSpec.EXACTLY) {
-            //Must be this size
             height = heightSize;
         } else if (heightMode == MeasureSpec.AT_MOST) {
-            //Can't be bigger than...
             height = Math.min(desiredHeight, heightSize);
         } else {
-            //Be whatever you want
             height = desiredHeight;
         }
 
-        //MUST CALL THIS
         setMeasuredDimension(width, height);
     }
 
@@ -105,10 +79,8 @@ public abstract class GridView extends View {
         this.endWidth = startWidth + dimensions;
         this.endHeight = startHeight + dimensions;
 
-        // draw outline
         this.p.setStrokeWidth(12);
-        //canvas.drawRect(startWidth, startHeight, endWidth, endHeight, p);
-        //canvas.drawRect(0, 0, dimensions, dimensions, p);
+
         canvas.drawRect(0, 0, getWidth(), getWidth(), p);
 
     }
